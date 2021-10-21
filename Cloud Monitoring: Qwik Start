@@ -1,0 +1,99 @@
+Create a Compute Engine instance with the following details:
+
+path :- In the Cloud Console dashboard, go to Navigation menu > Compute Engine > VM instances, then click Create instance.
+
+task 1:
+
+Fill in the fields as follows, leaving all other fields at the default value:
+
+Field	Value
+Name	lamp-1-vm
+Region	us-central1 (Iowa)
+Zone	us-central1-a
+Series	N1
+Machine type	n1-standard-2
+Firewall	check Allow HTTP traffic
+
+task-2 : Run the following commands in the SSH window to set up Apache2 HTTP Server:
+
+sudo apt-get update
+
+sudo apt-get install apache2 php7.0  
+
+when asked press Y
+
+
+sudo service apache2 restart
+
+task-3 : 
+
+press the external ip and we get a successful welcome message
+
+TASK 4:- Create a Monitoring workspace
+In the Cloud Console, click Navigation menu > Monitoring.
+
+Wait for your workspace to be provisioned.
+
+
+curl -sSO https://dl.google.com/cloudagents/add-monitoring-agent-repo.sh
+sudo bash add-monitoring-agent-repo.sh
+
+sudo apt-get update
+
+sudo apt-get install stackdriver-agent
+
+curl -sSO https://dl.google.com/cloudagents/add-logging-agent-repo.sh
+sudo bash add-logging-agent-repo.sh
+
+sudo apt-get update
+
+sudo apt-get install google-fluentd
+
+// Create an uptime check
+
+In the Cloud Console, in the left menu, click Uptime checks, and then click Create Uptime Check.
+
+Set the following fields:
+Title: Lamp Uptime Check, then click Next.
+
+Protocol: HTTP
+
+Resource Type: Instance
+
+Applies to: Single, lamp-1-vm
+
+Path: leave at default
+
+Check Frequency: 1 min
+
+Click on Next to leave the other details to default and click Test to verify that your uptime check can connect to the resource.
+
+When you see a green check mark everything can connect. Click Create.
+
+
+Create an alerting policy
+Use Cloud Monitoring to create one or more alerting policies.
+
+In the left menu, click Alerting, and then click Create Policy.
+
+Click Add Condition.
+
+Set the following in the panel that opens, leave all other fields at the default value.
+
+Target: Start typing "VM" in the resource type and metric field, and then select:
+
+Resource Type: VM Instance (gce_instance)
+
+Metric: Type "network", and then select Network traffic (gce_instance+1). Be sure to choose the Network traffic resource with agent.googleapis.com/interface/traffic:
+
+Configuration
+
+Condition: is above
+Threshold: 500
+For: 1 minute
+Click ADD.
+
+Click on Next.
+
+Click on drop down arrow next to Notification Channels, then click on Manage Notification Channels.
+
